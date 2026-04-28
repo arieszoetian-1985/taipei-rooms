@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台北日系精緻公寓｜Taipei Minimal Stay｜台北ミニマルステイ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400&family=Noto+Sans+TC:wght@300;400;500&family=Noto+Serif+JP:wght@300;400&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sage:#7a9e7e;--sage-light:#e8f0e9;--sage-dark:#4a7a4e;
+  --ink:#2c2c2c;--ink-soft:#5a5a5a;
+  --cream:#f9f7f4;--white:#ffffff;
+  --border:rgba(0,0,0,0.1);--radius:12px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh}
+body.lang-ja{font-family:'Noto Sans JP',sans-serif}
+
+#save-bar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(249,247,244,0.92);backdrop-filter:blur(8px);
+  border-bottom:0.5px solid var(--border);
+  padding:10px 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+}
+#save-bar p{font-size:12px;color:var(--ink-soft);line-height:1.5}
+#save-bar strong{color:var(--ink);font-weight:500}
+.save-btn{
+  background:var(--sage);color:#fff;font-family:inherit;
+  font-size:12px;padding:8px 20px;border-radius:20px;border:none;cursor:pointer;
+  white-space:nowrap;transition:background 0.2s;flex-shrink:0;
+}
+.save-btn:hover{background:#6a8e6e}
+.save-btn:disabled{background:#aaa;cursor:default}
+
+#lang-bar{display:flex;justify-content:flex-end;gap:4px;padding:12px 24px 0}
+.lang-btn{
+  font-size:11px;letter-spacing:1px;padding:4px 12px;
+  border-radius:20px;border:0.5px solid var(--border);
+  background:transparent;cursor:pointer;color:var(--ink-soft);
+  transition:all 0.18s;font-family:inherit;
+}
+.lang-btn:hover{border-color:var(--sage);color:var(--sage)}
+.lang-btn.active{background:var(--sage);color:#fff;border-color:var(--sage)}
+
+.site-wrap{max-width:900px;margin:0 auto;padding:0 0 80px}
+.hero{text-align:center;padding:44px 24px 36px;border-bottom:0.5px solid var(--border);margin-bottom:44px}
+.hero-tag{display:inline-block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--sage);border:0.5px solid var(--sage);padding:4px 12px;border-radius:20px;margin-bottom:18px}
+.hero h1{font-family:'Noto Serif TC',serif;font-size:30px;font-weight:300;line-height:1.65;margin-bottom:14px}
+body.lang-ja .hero h1{font-family:'Noto Serif JP',serif}
+.hero p{font-size:13px;color:var(--ink-soft);line-height:1.9;max-width:460px;margin:0 auto}
+
+.features{display:flex;justify-content:center;gap:28px;padding:0 24px 44px;flex-wrap:wrap;border-bottom:0.5px solid var(--border);margin-bottom:44px}
+.feat{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink-soft)}
+.feat-dot{width:7px;height:7px;border-radius:50%;background:var(--sage);flex-shrink:0}
+
+.section-block{margin-bottom:52px;padding:0 24px}
+.section-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--sage);margin-bottom:4px}
+.section-title{font-family:'Noto Serif TC',serif;font-size:20px;font-weight:300;margin-bottom:6px}
+body.lang-ja .section-title{font-family:'Noto Serif JP',serif}
+.section-sub{font-size:12px;color:var(--ink-soft);margin-bottom:22px;line-height:1.7}
+.subsection-head{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-soft);margin:28px 0 12px;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
+
+.rooms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.shared-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px}
+
+.room-card{background:var(--white);border-radius:var(--radius);border:0.5px solid var(--border);overflow:hidden;transition:transform 0.18s}
+.room-card:hover{transform:translateY(-2px)}
+
+.photo-zone{width:100%;aspect-ratio:4/3;background:var(--sage-light);position:relative;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;overflow:hidden}
+.photo-zone img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+.photo-zone img.loaded{opacity:1}
+.upload-hint{display:flex;flex-direction:column;align-items:center;gap:5px;pointer-events:none;position:relative;z-index:1;transition:opacity 0.25s}
+.photo-zone.has-photo .upload-hint{opacity:0}
+.upload-icon{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--sage);display:flex;align-items:center;justify-content:center;color:var(--sage);font-size:16px;line-height:1}
+.upload-text{font-size:10px;color:var(--sage);letter-spacing:0.5px}
+.photo-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;opacity:0;transition:all 0.2s;z-index:2}
+.photo-zone.has-photo:hover .photo-overlay{opacity:1;background:rgba(0,0,0,0.28)}
+.photo-overlay span{font-size:11px;color:#fff;border:0.5px solid rgba(255,255,255,0.8);padding:4px 12px;border-radius:20px}
+input[type="file"]{display:none}
+
+.room-info{padding:12px 14px}
+.room-name{font-size:13px;font-weight:500;margin-bottom:3px}
+.room-meta{font-size:11px;color:var(--ink-soft);line-height:1.7}
+.bed-badge{display:inline-block;font-size:10px;color:var(--sage);background:var(--sage-light);padding:2px 8px;border-radius:10px;margin-top:4px}
+
+.shared-card{background:var(--white);border-radius:10px;border:0.5px solid var(--border);overflow:hidden}
+.shared-photo{width:100%;aspect-ratio:1/1;background:#f0ede8;position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.shared-photo img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:0;transition:opacity 0.3s}
+.shared-photo img.loaded{opacity:1}
+.shared-hint{position:relative;z-index:1;transition:opacity 0.25s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.shared-photo.has-photo .shared-hint{opacity:0}
+.shared-photo .photo-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;opacity:0;transition:all 0.2s;z-index:2}
+.shared-photo.has-photo:hover .photo-overlay{opacity:1;background:rgba(0,0,0,0.28)}
+.shared-photo .photo-overlay span{font-size:10px;color:#fff;border:0.5px solid rgba(255,255,255,0.8);padding:3px 10px;border-radius:20px}
+.shared-label{padding:8px 10px;font-size:11px;font-weight:500}
+
+.notice-bar{background:var(--sage-light);border-radius:8px;border:0.5px solid var(--sage);padding:10px 14px;font-size:12px;color:var(--sage-dark);line-height:1.7;margin-bottom:22px;display:flex;gap:8px;align-items:flex-start}
+.notice-bar::before{content:"ℹ";font-size:13px;flex-shrink:0;margin-top:1px}
+.divider{height:0.5px;background:var(--border);margin:0 24px 44px}
+
+.cta-block{margin:0 24px;background:var(--white);border-radius:var(--radius);border:0.5px solid var(--border);padding:32px 28px;display:flex;align-items:center;justify-content:center;text-align:center}
+.cta-text h3{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:300}
+body.lang-ja .cta-text h3{font-family:'Noto Serif JP',serif}
+
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;font-size:12px;padding:10px 20px;border-radius:24px;opacity:0;transition:all 0.3s;pointer-events:none;z-index:200;white-space:nowrap}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:600px){
+  .hero h1{font-size:24px}
+  .rooms-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  .shared-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  #save-bar{flex-direction:column;align-items:flex-start}
+  #lang-bar{padding:10px 16px 0}
+}
+</style>
+</head>
+<body class="lang-zh">
+
+<div id="save-bar">
+  <p id="save-hint"><strong>上傳照片後</strong>，點右側按鈕儲存含照片的完整網頁，再上傳到主機即可分享連結。</p>
+  <button class="save-btn" id="btn-save" onclick="saveWithPhotos()">💾 儲存含照片版本</button>
+</div>
+
+<div class="site-wrap">
+
+  <div id="lang-bar">
+    <button class="lang-btn active" onclick="setLang('zh',this)">中文</button>
+    <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+    <button class="lang-btn" onclick="setLang('ja',this)">日本語</button>
+  </div>
+
+  <div class="hero">
+    <div class="hero-tag" id="t-tag">台北 · 日系精緻公寓</div>
+    <h1 id="t-h1">靜謐城中，<br>一個屬於你的台北角落</h1>
+    <p id="t-hero-p">精選台北市區六間日系簡約風格雅房，捷運直達，完整廚房設備，適合長住與遠距工作者。</p>
+  </div>
+
+  <div class="features">
+    <div class="feat"><div class="feat-dot"></div><span data-key="f1">捷運站步行可達</span></div>
+    <div class="feat"><div class="feat-dot"></div><span data-key="f2">完整廚房設備</span></div>
+    <div class="feat"><div class="feat-dot"></div><span data-key="f3">適合長住／月租</span></div>
+    <div class="feat"><div class="feat-dot"></div><span data-key="f4">日系簡約佈置</span></div>
+    <div class="feat"><div class="feat-dot"></div><span data-key="f5">全套衛浴共用</span></div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-label" data-key="zx-label">忠孝復興站</div>
+    <div class="section-title" data-key="zx-title">東區核心，步行即達</div>
+    <div class="section-sub" data-key="zx-sub">共四間雅房 · 兩套全套衛浴 · 完整共用空間</div>
+    <div class="subsection-head" data-key="sh-rooms">房間</div>
+    <div class="rooms-grid" id="grid-zx"></div>
+    <div class="subsection-head" data-key="sh-bath">全套衛浴</div>
+    <div class="shared-grid" id="shared-zx-bath"></div>
+    <div class="subsection-head" data-key="sh-common">共用空間</div>
+    <div class="shared-grid" id="shared-zx-common"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-block">
+    <div class="section-label" data-key="yc-label">永春站</div>
+    <div class="section-title" data-key="yc-title">靜謐宜居，兩間房源</div>
+    <div class="notice-bar" data-key="yc-notice">2026 年 6 月捷運延伸線通車後，距奉天宮站下樓即達，交通更加便利。</div>
+    <div class="subsection-head" data-key="sh-rooms">房間</div>
+    <div class="rooms-grid" id="grid-yc"></div>
+    <div class="subsection-head" data-key="sh-bath">全套衛浴</div>
+    <div class="shared-grid" id="shared-yc-bath"></div>
+    <div class="subsection-head" data-key="sh-common">共用空間</div>
+    <div class="shared-grid" id="shared-yc-common"></div>
+  </div>
+
+  <div class="cta-block">
+    <div class="cta-text">
+      <h3 data-key="cta">有任何問題，歡迎在 LINE 上聯絡我們</h3>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+const i18n={
+  zh:{
+    lang:'zh-Hant',
+    'save-hint':'<strong>上傳照片後</strong>，點右側按鈕儲存含照片的完整網頁，再上傳到主機即可分享連結。',
+    'save-btn':'💾 儲存含照片版本',
+    'save-processing':'處理中…','save-embedding':'正在將照片嵌入網頁，請稍候…','save-done':'✓ 已下載含照片的完整網頁！','save-fail':'儲存失敗，請再試一次',
+    't-tag':'台北 · 日系精緻公寓',
+    't-h1':'靜謐城中，<br>一個屬於你的台北角落',
+    't-hero-p':'精選台北市區六間日系簡約風格雅房，捷運直達，完整廚房設備，適合長住與遠距工作者。',
+    'f1':'捷運站步行可達','f2':'完整廚房設備','f3':'適合長住／月租','f4':'日系簡約佈置','f5':'全套衛浴共用',
+    'zx-label':'忠孝復興站','zx-title':'東區核心，步行即達','zx-sub':'共四間雅房 · 兩套全套衛浴 · 完整共用空間',
+    'yc-label':'永春站','yc-title':'靜謐宜居，兩間房源',
+    'yc-notice':'2026 年 6 月捷運延伸線通車後，距奉天宮站下樓即達，交通更加便利。',
+    'sh-rooms':'房間','sh-bath':'全套衛浴','sh-common':'共用空間',
+    'cta':'有任何問題，歡迎在 LINE 上聯絡我們',
+    'upload':'上傳照片','change':'更換照片','upload-s':'上傳','change-s':'更換',
+  },
+  en:{
+    lang:'en',
+    'save-hint':'<strong>After uploading photos</strong>, click the button to save the complete page with photos embedded, then upload to your host to share the link.',
+    'save-btn':'💾 Save with Photos',
+    'save-processing':'Processing…','save-embedding':'Embedding photos, please wait…','save-done':'✓ Page with photos saved!','save-fail':'Save failed, please try again',
+    't-tag':'Taipei · Japanese Minimal Apartments',
+    't-h1':'A quiet corner<br>of Taipei, just for you',
+    't-hero-p':'Six Japanese-style private rooms in central Taipei — steps from the MRT, full kitchen, ideal for long stays and remote workers.',
+    'f1':'Walking distance to MRT','f2':'Full kitchen','f3':'Long stay / monthly','f4':'Japanese minimal décor','f5':'Shared full bathrooms',
+    'zx-label':'Zhongxiao Fuxing Station','zx-title':'Heart of East District','zx-sub':'4 private rooms · 2 full bathrooms · shared common areas',
+    'yc-label':'Yongchun Station','yc-title':'Quiet & Residential, 2 rooms',
+    'yc-notice':'When the MRT extension opens in June 2026, Fengtian Temple Station will be just downstairs — even more convenient.',
+    'sh-rooms':'Rooms','sh-bath':'Bathrooms','sh-common':'Common Areas',
+    'cta':'Any questions? Feel free to contact us on LINE',
+    'upload':'Upload Photo','change':'Change Photo','upload-s':'Upload','change-s':'Change',
+  },
+  ja:{
+    lang:'ja',
+    'save-hint':'<strong>写真アップロード後</strong>、右のボタンで写真入り完全ページを保存し、サーバーにアップすればリンクを共有できます。',
+    'save-btn':'💾 写真入りで保存',
+    'save-processing':'処理中…','save-embedding':'写真を埋め込み中、しばらくお待ちください…','save-done':'✓ 写真入りページを保存しました！','save-fail':'保存失敗。もう一度お試しください',
+    't-tag':'台北 · 日本風ミニマルアパート',
+    't-h1':'都心の静けさ、<br>あなただけの台北の居場所',
+    't-hero-p':'台北市内に6室の日本風シンプルな個室。MRT徒歩圏内、フルキッチン完備。長期滞在・リモートワークに最適。',
+    'f1':'MRT駅徒歩圏内','f2':'フルキッチン完備','f3':'長期滞在・月極可','f4':'日本風ミニマルインテリア','f5':'バスルーム共用',
+    'zx-label':'忠孝復興駅','zx-title':'東区の中心地、徒歩圏内','zx-sub':'個室4室 · バスルーム2室 · 共有スペース完備',
+    'yc-label':'永春駅','yc-title':'静かな住宅エリア、2室',
+    'yc-notice':'2026年6月のMRT延伸線開通後、奉天宮駅が目と鼻の先になり、さらに便利になります。',
+    'sh-rooms':'お部屋','sh-bath':'バスルーム','sh-common':'共有スペース',
+    'cta':'ご質問はLINEからお気軽にどうぞ',
+    'upload':'写真を追加','change':'写真を変更','upload-s':'追加','change-s':'変更',
+  }
+};
+
+const bedNames={
+  zh:{single:'單人床',double:'雙人床',largeSingle:'單人加大床'},
+  en:{single:'Single bed',double:'Double bed',largeSingle:'Large single bed'},
+  ja:{single:'シングルベッド',double:'ダブルベッド',largeSingle:'ラージシングル'},
+};
+const metaNames={
+  zh:{one:'1人入住 · 雅房',two:'1–2人入住 · 雅房'},
+  en:{one:'1 guest · Private room',two:'1–2 guests · Private room'},
+  ja:{one:'1名 · 個室',two:'1–2名 · 個室'},
+};
+const roomNames={
+  zh:['忠孝復興 A 室','忠孝復興 B 室','忠孝復興 C 室','忠孝復興 D 室','永春站 A 室','永春站 B 室'],
+  en:['Zhongxiao Fuxing — Room A','Zhongxiao Fuxing — Room B','Zhongxiao Fuxing — Room C','Zhongxiao Fuxing — Room D','Yongchun — Room A','Yongchun — Room B'],
+  ja:['忠孝復興 Aルーム','忠孝復興 Bルーム','忠孝復興 Cルーム','忠孝復興 Dルーム','永春 Aルーム','永春 Bルーム'],
+};
+const sharedNames={
+  zh:{bath1:'衛浴一',bath2:'衛浴二',bathYC:'衛浴',entry:'玄關',living:'客廳',dining:'餐廳',kitchen:'廚房',laundry:'洗衣間'},
+  en:{bath1:'Bathroom 1',bath2:'Bathroom 2',bathYC:'Bathroom',entry:'Entrance',living:'Living Room',dining:'Dining Room',kitchen:'Kitchen',laundry:'Laundry'},
+  ja:{bath1:'バスルーム①',bath2:'バスルーム②',bathYC:'バスルーム',entry:'玄関',living:'リビング',dining:'ダイニング',kitchen:'キッチン',laundry:'ランドリー'},
+};
+
+const zxRoomDefs=[{id:'zxa',bed:'single',meta:'one'},{id:'zxb',bed:'single',meta:'one'},{id:'zxc',bed:'double',meta:'two'},{id:'zxd',bed:'largeSingle',meta:'one'}];
+const ycRoomDefs=[{id:'yca',bed:'single',meta:'one'},{id:'ycb',bed:'double',meta:'two'}];
+const zxBathDefs=[{id:'zx-bath1',key:'bath1'},{id:'zx-bath2',key:'bath2'}];
+const zxCommonDefs=[{id:'zx-entry',key:'entry'},{id:'zx-living',key:'living'},{id:'zx-dining',key:'dining'},{id:'zx-kitchen',key:'kitchen'},{id:'zx-laundry',key:'laundry'}];
+const ycBathDefs=[{id:'yc-bath1',key:'bathYC'}];
+const ycCommonDefs=[{id:'yc-entry',key:'entry'},{id:'yc-living',key:'living'},{id:'yc-dining',key:'dining'},{id:'yc-kitchen',key:'kitchen'},{id:'yc-laundry',key:'laundry'}];
+
+let currentLang='zh';
+
+function buildRoomCard(def,roomIdx,lang){
+  const d=document.createElement('div');d.className='room-card';
+  const name=roomNames[lang][roomIdx];
+  const bed=bedNames[lang][def.bed];
+  const meta=metaNames[lang][def.meta];
+  d.innerHTML=`
+    <div class="photo-zone" id="zone-${def.id}">
+      <img id="img-${def.id}" alt="${name}">
+      <div class="upload-hint"><div class="upload-icon">+</div><div class="upload-text up-t">${i18n[lang].upload}</div></div>
+      <div class="photo-overlay"><span class="ch-t">${i18n[lang].change}</span></div>
+    </div>
+    <input type="file" id="file-${def.id}" accept="image/*">
+    <div class="room-info">
+      <div class="room-name rn-t">${name}</div>
+      <div class="room-meta rm-t">${meta}</div>
+      <div class="bed-badge bd-t">${bed}</div>
+    </div>`;
+  return d;
+}
+
+function buildSharedCard(def,lang){
+  const d=document.createElement('div');d.className='shared-card';
+  const label=sharedNames[lang][def.key];
+  d.innerHTML=`
+    <div class="shared-photo" id="zone-${def.id}">
+      <img id="img-${def.id}" alt="${label}">
+      <div class="shared-hint"><div class="upload-icon" style="width:22px;height:22px;font-size:13px">+</div><div class="upload-text up-t" style="font-size:9px">${i18n[lang]['upload-s']}</div></div>
+      <div class="photo-overlay"><span class="ch-t">${i18n[lang]['change-s']}</span></div>
+    </div>
+    <input type="file" id="file-${def.id}" accept="image/*">
+    <div class="shared-label sl-t">${label}</div>`;
+  return d;
+}
+
+function bindUpload(id){
+  const zone=document.getElementById('zone-'+id);
+  const input=document.getElementById('file-'+id);
+  const img=document.getElementById('img-'+id);
+  zone.addEventListener('click',()=>input.click());
+  input.addEventListener('change',e=>{
+    const file=e.target.files[0];if(!file)return;
+    const r=new FileReader();
+    r.onload=ev=>{img.src=ev.target.result;img.onload=()=>{img.classList.add('loaded');zone.classList.add('has-photo');}};
+    r.readAsDataURL(file);
+  });
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.outline='2px dashed #7a9e7e'});
+  zone.addEventListener('dragleave',()=>{zone.style.outline=''});
+  zone.addEventListener('drop',e=>{
+    e.preventDefault();zone.style.outline='';
+    const file=e.dataTransfer.files[0];if(!file||!file.type.startsWith('image/'))return;
+    const r=new FileReader();
+    r.onload=ev=>{img.src=ev.target.result;img.onload=()=>{img.classList.add('loaded');zone.classList.add('has-photo');}};
+    r.readAsDataURL(file);
+  });
+}
+
+function populateAll(lang){
+  ['grid-zx','shared-zx-bath','shared-zx-common','grid-yc','shared-yc-bath','shared-yc-common'].forEach(id=>{
+    const g=document.getElementById(id);if(g)g.innerHTML='';
+  });
+  const gZX=document.getElementById('grid-zx');
+  zxRoomDefs.forEach((def,i)=>{gZX.appendChild(buildRoomCard(def,i,lang));bindUpload(def.id)});
+  const gZXB=document.getElementById('shared-zx-bath');
+  zxBathDefs.forEach(def=>{gZXB.appendChild(buildSharedCard(def,lang));bindUpload(def.id)});
+  const gZXC=document.getElementById('shared-zx-common');
+  zxCommonDefs.forEach(def=>{gZXC.appendChild(buildSharedCard(def,lang));bindUpload(def.id)});
+  const gYC=document.getElementById('grid-yc');
+  ycRoomDefs.forEach((def,i)=>{gYC.appendChild(buildRoomCard(def,i+4,lang));bindUpload(def.id)});
+  const gYCB=document.getElementById('shared-yc-bath');
+  ycBathDefs.forEach(def=>{gYCB.appendChild(buildSharedCard(def,lang));bindUpload(def.id)});
+  const gYCC=document.getElementById('shared-yc-common');
+  ycCommonDefs.forEach(def=>{gYCC.appendChild(buildSharedCard(def,lang));bindUpload(def.id)});
+}
+
+function setLang(lang,btn){
+  currentLang=lang;
+  const d=i18n[lang];
+  document.documentElement.lang=d.lang;
+  document.body.className='lang-'+(lang==='zh'?'zh':'lang-'+lang).replace('lang-','');
+  document.body.className='lang-'+lang;
+
+  document.getElementById('save-hint').innerHTML=d['save-hint'];
+  document.getElementById('btn-save').textContent=d['save-btn'];
+  document.getElementById('t-tag').textContent=d['t-tag'];
+  document.getElementById('t-h1').innerHTML=d['t-h1'];
+  document.getElementById('t-hero-p').textContent=d['t-hero-p'];
+
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const k=el.getAttribute('data-key');
+    if(d[k]!==undefined)el.textContent=d[k];
+  });
+
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+
+  // update cards
+  const allRoomDefs=[...zxRoomDefs.map((d,i)=>({...d,idx:i})),...ycRoomDefs.map((d,i)=>({...d,idx:i+4}))];
+  const allSharedDefs=[...zxBathDefs,...zxCommonDefs,...ycBathDefs,...ycCommonDefs];
+  allRoomDefs.forEach(def=>{
+    const card=document.getElementById('zone-'+def.id)?.closest('.room-card');if(!card)return;
+    card.querySelector('.rn-t').textContent=roomNames[lang][def.idx];
+    card.querySelector('.rm-t').textContent=metaNames[lang][def.meta];
+    card.querySelector('.bd-t').textContent=bedNames[lang][def.bed];
+    card.querySelector('.up-t').textContent=d.upload;
+    card.querySelector('.ch-t').textContent=d.change;
+  });
+  allSharedDefs.forEach(def=>{
+    const card=document.getElementById('zone-'+def.id)?.closest('.shared-card');if(!card)return;
+    card.querySelector('.sl-t').textContent=sharedNames[lang][def.key];
+    card.querySelector('.up-t').textContent=d['upload-s'];
+    card.querySelector('.ch-t').textContent=d['change-s'];
+  });
+}
+
+populateAll('zh');
+
+function showToast(msg,ms=2200){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),ms);
+}
+
+function saveWithPhotos(){
+  const btn=document.getElementById('btn-save');
+  const d=i18n[currentLang];
+  btn.disabled=true;btn.textContent=d['save-processing'];
+  showToast(d['save-embedding'],3000);
+  setTimeout(()=>{
+    try{
+      const clone=document.documentElement.cloneNode(true);
+      clone.querySelector('#save-bar')?.remove();
+      clone.querySelector('#toast')?.remove();
+      const html='<!DOCTYPE html>\n'+clone.outerHTML;
+      const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download='taipei-rooms-with-photos.html';
+      a.click();
+      showToast(d['save-done']);
+    }catch(err){
+      showToast(d['save-fail']);
+      console.error(err);
+    }
+    btn.disabled=false;btn.textContent=d['save-btn'];
+  },400);
+}
+</script>
+</body>
+</html>
